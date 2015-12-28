@@ -29,9 +29,9 @@ type Feature struct {
 	Name        string
 	Category    []string
 	Description string
-	Geometry    *Geometry
-	Property    *Property
-	Style       *Style
+	Geometry    Geometry
+	Property    Property
+	Style       Style
 	RouteInfo   []Route
 }
 
@@ -45,8 +45,8 @@ type Geometry struct {
 	Compress     string
 	CompressType string
 	Datum        Datum
-	Exterior     *Polygon
-	Interior     *Polygon
+	Exterior     Polygon
+	Interior     Polygon
 	Radius       string
 	Geometry     []Geometry
 }
@@ -79,7 +79,7 @@ type Polygon struct {
 // 地域・拠点情報の詳細。
 type Property struct {
 	WeatherAreaCode int
-	WeatherList     *WeatherList
+	WeatherList     WeatherList
 }
 
 type WeatherList struct {
@@ -101,18 +101,18 @@ const (
 
 type Route struct {
 	Edge     []Edge
-	Property *Property
+	Property Property
 }
 
 type Edge struct {
 	Id       string
 	Vertex   []Vertex
-	Property *Property
+	Property Property
 }
 
 type Vertex struct {
 	Type     VertexType
-	Property *Property
+	Property Property
 }
 
 type VertexType string
