@@ -6,15 +6,26 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+
+	"github.com/pkg/errors"
 )
 
 type YOLP struct {
-	appID string
+	appID  string
+	client *http.Client
 }
 
 func NewYOLP(appID string) *YOLP {
 	return &YOLP{
-		appID: appID,
+		appID:  appID,
+		client: &http.Client{},
+	}
+}
+
+func NewYOLPWithClient(appID string, client *http.Client) *YOLP {
+	return &YOLP{
+		appID:  appID,
+		client: client,
 	}
 }
 
@@ -45,7 +56,12 @@ func (y *YOLP) SearchZipCode(zipCode string) (*YDF, error) {
 }
 
 func (y *YOLP) apiGet(url string) (*YDF, error) {
-	res, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "Can not create a new request")
+	}
+
+	res, err := y.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
