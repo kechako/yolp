@@ -40,7 +40,7 @@ const (
 
 func (y *YOLP) Place(latitude float32, longitude float32) (*YDF, error) {
 	query := map[string]string{
-		"coordinates": fmt.Sprintf("%f,%f", latitude, longitude),
+		"coordinates": fmt.Sprintf("%f,%f", longitude, latitude),
 		"interval":    "5",
 	}
 
