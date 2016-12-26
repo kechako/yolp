@@ -171,10 +171,8 @@ func (w *Weather) IsRaining() bool {
 func (w *Weather) Time() time.Time {
 	var year, month, day, hour, min int
 
-	fmt.Println(w.Date)
 	_, err := fmt.Sscanf(w.Date, "%4d%2d%2d%2d%2d", &year, &month, &day, &hour, &min)
 	if err != nil {
-		fmt.Println(err)
 		return time.Time{}
 	}
 
