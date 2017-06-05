@@ -34,8 +34,8 @@ func (y *YOLP) AppID() string {
 }
 
 const (
-	yolpPlaceUrl         = "http://weather.olp.yahooapis.jp/v1/place"
-	yolpSearchZipCodeUrl = "http://search.olp.yahooapis.jp/OpenLocalPlatform/V1/zipCodeSearch"
+	yolpPlaceUrl         = "https://map.yahooapis.jp/weather/V1/place"
+	yolpSearchZipCodeUrl = "https://map.yahooapis.jp/search/zip/V1/zipCodeSearch"
 )
 
 func (y *YOLP) Place(latitude float32, longitude float32) (*YDF, error) {
