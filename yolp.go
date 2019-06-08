@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/pkg/errors"
+	"golang.org/x/xerrors"
 )
 
 type YOLP struct {
@@ -58,7 +58,7 @@ func (y *YOLP) SearchZipCode(zipCode string) (*YDF, error) {
 func (y *YOLP) apiGet(url string) (*YDF, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "Can not create a new request")
+		return nil, xerrors.Errorf("can not create a new request: %w", err)
 	}
 
 	res, err := y.client.Do(req)
