@@ -26,6 +26,9 @@ func (y *YOLP) Static(latitude, longitude float32, options *StaticOptions) (imag
 			return nil, err
 		}
 
+		if options.Mode != MapModeNormal {
+			query["mode"] = url.QueryEscape(string(options.Mode))
+		}
 		if options.Width > 0 {
 			query["width"] = strconv.Itoa(options.Width)
 		}
@@ -49,7 +52,20 @@ func (y *YOLP) Static(latitude, longitude float32, options *StaticOptions) (imag
 	return y.apiGetImage(y.makeUrl(yolpStaticUrl, query))
 }
 
+type MapMode string
+
+const (
+	MapModeNormal      MapMode = ""
+	MapModePhoto               = "photo"
+	MapModeUnderground         = "map-b1"
+	MapModeHD                  = "hd"
+	MapModeHybrid              = "hybrid"
+	MapModeBlank               = "blankmap"
+	MapModeOSM                 = "osm"
+)
+
 type StaticOptions struct {
+	Mode    MapMode
 	Width   int
 	Height  int
 	Pointer bool
@@ -65,8 +81,17 @@ func (options *StaticOptions) IsValid() error {
 	if options.Height < 0 {
 		return xerrors.New("Height must be greater than 0 if it isn't 0")
 	}
-	if options.Zoom < 0 || options.Zoom > 20 {
-		return xerrors.New("Zoom must be between 1 to 20 if it isn't 0")
+	if options.Zoom != 0 {
+		zoomMin, zoomMax := 1, 20
+		switch options.Mode {
+		case MapModeUnderground:
+			zoomMin, zoomMax = 19, 21
+		case MapModeBlank:
+			zoomMin, zoomMax = 11, 20
+		}
+		if options.Zoom < zoomMin || options.Zoom > zoomMax {
+			return xerrors.Errorf("Zoom must be between %d to %d if it isn't 0", zoomMin, zoomMax)
+		}
 	}
 	if len(options.Pins) > 0 {
 		for _, pin := range options.Pins {
