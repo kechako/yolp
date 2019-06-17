@@ -72,6 +72,13 @@ func (options *StaticOptions) IsValid() error {
 	if options.Zoom < 0 || options.Zoom > 20 {
 		return xerrors.New("Zoom must be between 1 to 20 if it isn't 0")
 	}
+	if len(options.Pins) > 0 {
+		for _, pin := range options.Pins {
+			if err := pin.IsValid(); err != nil {
+				return err
+			}
+		}
+	}
 	if options.Overlay != nil {
 		if options.Overlay.Type == OverlayTypeRainfall && options.Zoom > 15 {
 			return xerrors.New("Zoom must be between 1 to 20 if overlay rainfall")
@@ -98,6 +105,21 @@ type Pin struct {
 	Color     PinColor
 	Number    int
 	Alphabet  rune
+}
+
+func (p *Pin) IsValid() error {
+	switch p.Style {
+	case PinStyleNumber:
+		if p.Number < 0 || p.Number > 99 {
+			return xerrors.New("Pin.Number must be between 0 to 99 if the style is number.")
+		}
+	case PinStyleAlphabet:
+		if p.Alphabet < 'a' || p.Alphabet > 'z' {
+			return xerrors.New("Pin.Alphabet must be between 'a' to 'z' if the style is alphabet.")
+		}
+	}
+
+	return nil
 }
 
 func (p *Pin) QueryKey() string {
