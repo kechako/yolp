@@ -81,11 +81,46 @@ func (options *StaticOptions) IsValid() error {
 	return nil
 }
 
+type PinStyle int
+
+const (
+	PinStyleNormal PinStyle = iota
+	PinStyleNumber
+	PinStyleAlphabet
+	PinStyleStar
+)
+
 type Pin struct {
+	Style     PinStyle
 	Latitude  float32
 	Longitude float32
 	Label     string
 	Color     PinColor
+	Number    int
+	Alphabet  rune
+}
+
+func (p *Pin) QueryKey() string {
+	switch p.Style {
+	case PinStyleNormal:
+		return "pin"
+	case PinStyleNumber:
+		if p.Number < 0 || p.Number > 99 {
+			return "pin"
+		}
+
+		return fmt.Sprintf("pin%d", p.Number)
+	case PinStyleAlphabet:
+		if p.Alphabet < 'a' || p.Alphabet > 'z' {
+			return "pin"
+		}
+
+		return fmt.Sprintf("pin%c", p.Alphabet)
+	case PinStyleStar:
+		return "pindefault"
+	}
+
+	return "pin"
 }
 
 func (p *Pin) String() string {
@@ -176,9 +211,8 @@ func (y *YOLP) Static(latitude, longitude float32, options *StaticOptions) (imag
 		if options.Zoom > 0 {
 			query["z"] = strconv.Itoa(options.Zoom)
 		}
-		for i, pin := range options.Pins {
-			key := fmt.Sprintf("pin%d", i+1)
-			query[key] = pin.String()
+		for _, pin := range options.Pins {
+			query[pin.QueryKey()] = pin.String()
 		}
 		if options.Overlay != nil {
 			query["overlay"] = options.Overlay.String()
