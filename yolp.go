@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-
-	"golang.org/x/xerrors"
 )
 
 type YOLP struct {
@@ -61,7 +59,7 @@ func (y *YOLP) SearchZipCode(zipCode string) (*YDF, error) {
 func (y *YOLP) apiGet(url string) (*YDF, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, xerrors.Errorf("can not create a new request: %w", err)
+		return nil, fmt.Errorf("can not create a new request: %w", err)
 	}
 
 	res, err := y.client.Do(req)
@@ -83,7 +81,7 @@ func (y *YOLP) apiGet(url string) (*YDF, error) {
 func (y *YOLP) apiGetImage(url string) (image.Image, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, xerrors.Errorf("can not create a new request: %w", err)
+		return nil, fmt.Errorf("can not create a new request: %w", err)
 	}
 
 	res, err := y.client.Do(req)

@@ -1,14 +1,13 @@
 package yolp
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
-
-	"golang.org/x/xerrors"
 )
 
 const yolpStaticUrl = "https://map.yahooapis.jp/map/V1/static"
@@ -76,10 +75,10 @@ type StaticOptions struct {
 
 func (options *StaticOptions) IsValid() error {
 	if options.Width < 0 {
-		return xerrors.New("Width must be greater than 0 if it isn't 0")
+		return errors.New("Width must be greater than 0 if it isn't 0")
 	}
 	if options.Height < 0 {
-		return xerrors.New("Height must be greater than 0 if it isn't 0")
+		return errors.New("Height must be greater than 0 if it isn't 0")
 	}
 	if options.Zoom != 0 {
 		zoomMin, zoomMax := 1, 20
@@ -90,7 +89,7 @@ func (options *StaticOptions) IsValid() error {
 			zoomMin, zoomMax = 11, 20
 		}
 		if options.Zoom < zoomMin || options.Zoom > zoomMax {
-			return xerrors.Errorf("Zoom must be between %d to %d if it isn't 0", zoomMin, zoomMax)
+			return fmt.Errorf("Zoom must be between %d to %d if it isn't 0", zoomMin, zoomMax)
 		}
 	}
 	if len(options.Pins) > 0 {
@@ -102,7 +101,7 @@ func (options *StaticOptions) IsValid() error {
 	}
 	if options.Overlay != nil {
 		if options.Overlay.Type == OverlayTypeRainfall && options.Zoom > 15 {
-			return xerrors.New("Zoom must be between 1 to 20 if overlay rainfall")
+			return errors.New("Zoom must be between 1 to 20 if overlay rainfall")
 		}
 	}
 
@@ -142,11 +141,11 @@ func (p *Pin) IsValid() error {
 	switch p.Style {
 	case PinStyleNumber:
 		if p.Number < 0 || p.Number > 99 {
-			return xerrors.New("Pin.Number must be between 0 to 99 if the style is number.")
+			return errors.New("Pin.Number must be between 0 to 99 if the style is number.")
 		}
 	case PinStyleAlphabet:
 		if p.Alphabet < 'a' || p.Alphabet > 'z' {
-			return xerrors.New("Pin.Alphabet must be between 'a' to 'z' if the style is alphabet.")
+			return errors.New("Pin.Alphabet must be between 'a' to 'z' if the style is alphabet.")
 		}
 	}
 
